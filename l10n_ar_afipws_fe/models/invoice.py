@@ -142,6 +142,19 @@ class AccountInvoice(models.Model):
         'Perido Asociado Hasta',
         help='Agregue este valor sólo si es una nota de débito o crédito y no tiene comprobante original asociado')
 
+    l10n_ar_payment_foreign_currency = fields.Selection(
+        [("S", "Si"), ("N", "No")],
+        string="Pagos en moneda extranjera",
+        compute="compute_l10n_ar_payment_foreign_currency",
+        store=True,
+        readonly=False
+    )
+
+    @api.onchange("currency_id", "line_ids")
+    @api.depends("currency_id")
+    def compute_l10n_ar_payment_foreign_currency(self):
+        for inv in self:
+            inv.l10n_ar_payment_foreign_currency = inv.company_id.l10n_ar_payment_foreign_currency
     @api.depends('journal_id', 'afip_auth_code')
     def _compute_validation_type(self):
         for rec in self:
@@ -605,6 +618,9 @@ print "Observaciones:", wscdc.Obs
 
             CbteAsoc = inv.get_related_invoices_data()
 
+            cancela_misma_moneda_ext = self.l10n_ar_payment_foreign_currency
+            condicion_iva_receptor_id = self.partner_id.afip_responsability_type_id.code
+
             # create the invoice internally in the helper
             if afip_ws == 'wsfe':
                 ws.CrearFactura(
@@ -613,7 +629,8 @@ print "Observaciones:", wscdc.Obs
                     imp_iva,
                     imp_trib, imp_op_ex, fecha_cbte, fecha_venc_pago,
                     fecha_serv_desde, fecha_serv_hasta,
-                    moneda_id, moneda_ctz
+                    moneda_id, moneda_ctz,
+                    cancela_misma_moneda_ext, condicion_iva_receptor_id,
                 )
             # elif afip_ws == 'wsmtxca':
             #     obs_generales = inv.comment
@@ -694,6 +711,7 @@ print "Observaciones:", wscdc.Obs
                     id_impositivo, moneda_id, moneda_ctz, obs_comerciales,
                     obs_generales, forma_pago, incoterms,
                     idioma_cbte, incoterms_ds, fecha_pago,
+                    cancela_misma_moneda_ext, condicion_iva_receptor_id,
                 )
             elif afip_ws == 'wsbfe':
                 zona = 1  # Nacional (la unica devuelta por afip)
@@ -721,7 +739,8 @@ print "Observaciones:", wscdc.Obs
                     cbte_nro, fecha_cbte, imp_total, imp_neto, imp_iva,
                     imp_tot_conc, impto_liq_rni, imp_op_ex, imp_perc, imp_iibb,
                     imp_perc_mun, imp_internos, moneda_id, moneda_ctz,
-                    fecha_venc_pago
+                    fecha_venc_pago,
+                    cancela_misma_moneda_ext, condicion_iva_receptor_id,
                 )
 
             if afip_ws in ['wsfe', 'wsbfe']:

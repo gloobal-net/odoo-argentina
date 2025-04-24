@@ -59,11 +59,13 @@ class AfipwsConnection(models.Model):
     afip_ws = fields.Selection([
         ('ws_sr_padron_a4', 'Servicio de Consulta de Padrón Alcance 4'),
         ('ws_sr_padron_a5', 'Servicio de Consulta de Padrón Alcance 5'),
+        ('ws_sr_constancia_inscripcion', 'Consulta a Padrón Constancia de Inscripción (ex A5)'),
         ('ws_sr_padron_a10', 'Servicio de Consulta de Padrón Alcance 10'),
         ('ws_sr_padron_a100', 'Servicio de Consulta de Padrón Alcance 100'),
     ],
         'AFIP WS',
         required=True,
+        default="ws_sr_constancia_inscripcion",
     )
 
     @api.multi
@@ -104,7 +106,7 @@ class AfipwsConnection(models.Model):
                 afip_ws_url = (
                     "https://awshomo.afip.gov.ar/sr-padron/webservices/"
                     "personaServiceA4?wsdl")
-        elif afip_ws == 'ws_sr_padron_a5':
+        elif afip_ws in ["ws_sr_padron_a5", "ws_sr_constancia_inscripcion"]:
             if environment_type == 'production':
                 afip_ws_url = (
                     "https://aws.afip.gov.ar/sr-padron/webservices/"
@@ -140,7 +142,7 @@ class AfipwsConnection(models.Model):
         # https://groups.google.com/d/msg/pyafipws/Xr08e4ZuMmQ/6iDzXwdJAwAJ
         # TODO mejorar ya que probablemente no ande en test pero el tema es
         # que en esta parte no tenemos data del env_type
-        if self.afip_ws in ['ws_sr_padron_a4', 'ws_sr_padron_a5']:
+        if self.afip_ws in ['ws_sr_padron_a4', 'ws_sr_padron_a5', "ws_sr_constancia_inscripcion"]:
             ws.HOMO = False
 
         if not ws:
@@ -191,7 +193,7 @@ class AfipwsConnection(models.Model):
         if afip_ws == 'ws_sr_padron_a4':
             from pyafipws.ws_sr_padron import WSSrPadronA4
             ws = WSSrPadronA4()
-        elif afip_ws == 'ws_sr_padron_a5':
+        elif afip_ws in ["ws_sr_padron_a5", "ws_sr_constancia_inscripcion"]:
             from pyafipws.ws_sr_padron import WSSrPadronA5
             ws = WSSrPadronA5()
         return ws

@@ -24,3 +24,8 @@ class ResCompany(models.Model):
         'If you choose required, then on supplier invoices, verification is '
         'mandatory before invoice validation',
     )
+    l10n_ar_payment_foreign_currency = fields.Selection(
+        [("S", "Si"), ("N", "No")],
+        string="Valor predeterminado para pagos en moneda extranjera",
+        default="N"
+    )

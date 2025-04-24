@@ -1,9 +1,9 @@
 {
     "name": "Factura Electrónica Argentina",
-    'version': '12.0.1.6.0',
+    'version': '12.0.1.6.1',
     'category': 'Localization/Argentina',
     'sequence': 14,
-    'author': 'ADHOC SA, Moldeo Interactive,Odoo Community Association (OCA)',
+    'author': 'Gloobal Net, ADHOC SA, Moldeo Interactive,Odoo Community Association (OCA)',
     'license': 'AGPL-3',
     'summary': '',
     'depends': [
@@ -31,6 +31,7 @@
         'views/res_currency_view.xml',
         'views/report_invoice.xml',
         'views/menuitem.xml',
+        'views/res_company_view.xml',
     ],
     'demo': [
         # 'demo/account_journal_expo_demo.yml',
