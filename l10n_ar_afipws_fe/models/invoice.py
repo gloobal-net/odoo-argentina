@@ -155,6 +155,8 @@ class AccountInvoice(models.Model):
     def compute_l10n_ar_payment_foreign_currency(self):
         for inv in self:
             inv.l10n_ar_payment_foreign_currency = inv.company_id.l10n_ar_payment_foreign_currency
+
+
     @api.depends('journal_id', 'afip_auth_code')
     def _compute_validation_type(self):
         for rec in self:
