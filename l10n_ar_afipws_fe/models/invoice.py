@@ -150,7 +150,7 @@ class AccountInvoice(models.Model):
         readonly=False
     )
 
-    @api.onchange("currency_id", "line_ids")
+    @api.onchange("currency_id", "invoice_line_ids")
     @api.depends("currency_id")
     def compute_l10n_ar_payment_foreign_currency(self):
         for inv in self:
